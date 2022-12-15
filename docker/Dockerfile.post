@@ -1,0 +1,73 @@
+# Copyright 2022 Sony Group Corporation.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+FROM nvidia/cudagl:11.3.1-devel-ubuntu18.04
+
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
+
+RUN apt-get update
+
+# Blender
+RUN apt-get install -y --no-install-recommends curl
+
+RUN cd /opt \
+        && curl https://download.blender.org/release/Blender3.3/blender-3.3.0-linux-x64.tar.xz --output ./blender-3.3.0-linux-x64.tar.xz \
+        && tar Jxfv blender-3.3.0-linux-x64.tar.xz
+
+# Common
+RUN apt-get install -y --no-install-recommends \
+        build-essential \
+        gfortran \
+        libibverbs-dev \
+        ca-certificates \
+        bzip2 \
+        ca-certificates \
+        curl \
+        # libglib2.0-0 \
+        # libgl1-mesa-glx \
+        python3.8 \
+        python3-pip \
+        openssh-client \
+        zip \
+        less \
+        python3.8-dev \
+        libxi6 \
+        libgconf-2-4 \
+        libxrender1
+
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.8 0
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 0
+
+RUN pip3 install --upgrade pip
+RUN pip3 install wheel setuptools
+RUN pip3 install opencv-python || true
+
+# Python dependency
+COPY requirements.txt /tmp/requirements.txt
+RUN pip3 install -r /tmp/requirements.txt
+
+# Torch
+RUN pip3 install lpips
+# RUN pip3 install torch==1.11.0+cu113 --extra-index-url https://download.pytorch.org/whl/cu113
+RUN pip3 install torchvision==0.10.0 --extra-index-url https://download.pytorch.org/whl/cu113
+RUN pip3 install torchmetrics
+RUN pip3 install torch-fidelity
+RUN pip3 install validators
+
+ENV PATH /opt/blender-3.3.0-linux-x64:${PATH}
+
+
+CMD [ "/bin/bash" ]
+
+

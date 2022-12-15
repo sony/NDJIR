@@ -1,0 +1,182 @@
+device_id: 0
+monitor_base_path: tmp
+data_path: DTU/scan69
+monitor_path: tmp
+model_load_path: tmp
+type_config: float
+use_wn: false
+geometric_network:
+  pe_bands: 6
+  feature_size: 256
+  layers: 8
+  act: softplus
+  skip_layers:
+  - 4
+  geometric_init: true
+  initial_sphere_radius: 0.35
+  use_inv_square: true
+  voxel:
+    type: voxel
+    grid_size: 512
+    feature_size: 4
+    use_ste: false
+base_color_network:
+  feature_size: 256
+  layers: 4
+  act: softplus
+  use_geometric_feature: true
+  use_normal: false
+environment_light_network:
+  pe_bands: 8
+  feature_size: 128
+  layers: 4
+  act: softplus
+  channels: 1
+  act_last: softplus # [softplus, relu, sigmoid]
+  inverse_black_degree: 1
+  upper_bound: -1
+soft_visibility_light_network:
+  pe_bands: 8
+  feature_size: 128
+  layers: 4
+  act: softplus
+  channels: 1
+  act_last: sigmoid # [softplus, relu, sigmoid]
+  inverse_black_degree: 1
+  use_geometric_feature: true
+  use_normal: true
+implicit_illumination_network:
+  use_me: true
+  use_me_on_specular: false
+  feature_size: 128
+  layers: 4
+  act: softplus
+  channels: 1
+  use_geometric_feature: true
+  use_normal: true
+  act_last: sigmoid # [softplus, relu, sigmoid]
+  inverse_black_degree: 1
+photogrammetric_light_network:
+  use_me: true
+  pe_bands: 4
+  feature_size: 256
+  layers: 4
+  act: softplus
+  use_inverse_distance: true
+  channels: 1
+roughness_network:
+  feature_size: 128
+  layers: 4
+  act: softplus
+  lower_bound: 0.089  # 0.045
+  last_bias: 0.0
+  use_geometric_feature: true
+  use_normal: true
+  prior_value: 0.5
+specular_reflectance_network:
+  fixme: false
+  feature_size: 128
+  layers: 4
+  act: softplus
+  channels: 3 # because of DoF; chromatic (3) for metal or achromatic (1) for dielectric
+  last_bias: 0.0
+  use_geometric_feature: true
+  use_normal: true
+  upper_bound_scale: 0.16 # Water (0.02), Common (0.04), Ruby (0.08), Diamond (0.16), No assumption (1.0)
+  prior_value: 0.04
+diffuse_brdf:
+  entangle: true
+specular_brdf:
+  model: filament # [filament, ue4]
+  remap: true
+  sampling: importance # [uniform, importance, mix]
+  use_split_sum: false
+  weight: 1.0
+background_modeling: true
+background_color: 0.0
+background_network:
+  pe_bands0: 6
+  pe_bands1: 4
+  feature_size0: 256
+  feature_size1: 256
+  layers0: 4
+  layers1: 2
+  act: softplus
+renderer:
+  n_samples0: 64
+  n_upsamples: 4
+  n_samples1: 16
+  n_bg_samples: 32
+  sampling_sigmoid_gain: 64
+  eps: 5.0e-05
+  eps_dot: 1e-8
+  eps_normal: 1e-16
+  bounding_sphere_radius: 1.0
+  t_near_far_method: intersect_with_aabb
+  deterministic: true
+  n_thetas: 8
+  #n_phi = n_theta * 2
+  diffuse_cdf_the_seed: 412
+  diffuse_cdf_phi_seed: 124
+  specular_cdf_the_seed: 810
+  specular_cdf_phi_seed: 108
+  stratified_sample_seed: 913
+  background_sample_seed: 510
+train:
+  batch_size: 4
+  n_rays: 512
+  epoch: 1500
+  patch_ray_sampling: false
+  mask_ray_sample_ratio: 0
+  base_learning_rate_weight: 0.0005
+  base_learning_rate_feat: 0.0005
+  learning_rate_end_ratio: 0.01
+  warmup_term_ratio: 0.015
+  cos_anneal_term_ratio: 0.15
+  weight_decay: 0.001
+  clip_grad_norm: 0
+  sigmoid_gain: 0.3
+  sigmoid_gain_lv_start: 1
+  sigmoid_gain_lv_end: 1
+  rgb_loss: l1
+  eikonal_weight: 0.1
+  tv_weight: 0.1
+  tv_sym_backward: true
+  mask_weight: 0.0
+  base_color_prior_weight: 0.1
+  base_color_prior_sym_backward: true
+  base_color_perturb_seed: 913
+  roughness_prior_weight: 1e-5
+  specular_reflectance_prior_weight: 1e-3
+valid:
+  skip: false
+  epoch_interval: 1000
+  n_rays: 500
+  n_down_samples: 2
+  index: 30
+  view0: 30
+  view1: 33
+  n_views: 60
+  fps: 20
+  filter_iters: 2
+  dtumvs:
+    mesh_path: .
+    scan: 69
+    mode: mesh
+    ref_dir: ./DTUMVS_ref
+    vis_out_dir: .
+    downsample_density: 0.2
+    patch_size: 60
+    max_dist: 20
+    visualize_threshold: 10
+    pixel_margin: 50
+extraction:
+  level: 0.0
+  rough_grid_size: 128
+  grid_size: 512
+  n_samples: 200000
+  batch_size: 50000
+  n_projections: 10
+  depth: 10
+  mc_only: false
+  gradient_direction: descent

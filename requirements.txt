@@ -1,0 +1,11 @@
+pybind11
+tqdm
+matplotlib
+opencv-python
+imageio
+scikit-learn
+scikit-image
+open3d
+trimesh
+hydra-core
+pytest
