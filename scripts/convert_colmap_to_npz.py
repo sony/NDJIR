@@ -46,12 +46,12 @@ def read_cameras(fpath):
             focal_length_xs.append(float(data[4]))
             if camera_model.startswith("SIMPLE"):
                 focal_length_ys.append(float(data[4]))
-                principal_point_xs.append(int(data[5]))
-                principal_point_ys.append(int(data[6]))
+                principal_point_xs.append(float(data[5]))
+                principal_point_ys.append(float(data[6]))
             else:
                 focal_length_ys.append(float(data[5]))
-                principal_point_xs.append(int(data[6]))
-                principal_point_ys.append(int(data[7]))
+                principal_point_xs.append(float(data[6]))
+                principal_point_ys.append(float(data[7]))
 
     camera_ids = np.asarray(camera_ids)
     widths = np.asarray(widths)
