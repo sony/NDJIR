@@ -17,7 +17,9 @@
 data_path=$1
 n_images=${2:-100}
 single_camera=${3:-1}
-colmap_use_mask=${0:-1}
+colmap_use_mask=${4:-0}
+data_type=${5:-individual}
+camera_model=${6:-SIMPLE_PINHOLE}
 
 # Create directories
 mkdir -p ${data_path}/{image,mask}
@@ -39,7 +41,8 @@ if [ ${colmap_use_mask} == 1 ]; then
         --workspace_path=${data_path} \
         --image_path=${data_path}/image \
         --mask_path=${data_path}/mask \
-        --camera_model=PINHOLE \
+        --camera_model=${camera_model} \
+        --data_type=${data_type} \
         --single_camera=${single_camera} \
         --sparse=1 \
         --use_gpu=0
@@ -47,8 +50,8 @@ else
     colmap automatic_reconstructor \
         --workspace_path=${data_path} \
         --image_path=${data_path}/image \
-        --camera_model=PINHOLE \
         --single_camera=${single_camera} \
+        --camera_model=${camera_model} \
         --sparse=1 \
         --use_gpu=0
 fi
