@@ -134,7 +134,7 @@ def get_all_mask_points(masks_dir):
 def refine_visual_hull(masks, Ps, scale, center):
     num_cam=masks.shape[0]
     GRID_SIZE=100
-    MINIMAL_VIEWS=45 # Fitted for DTU, might need to change for different data.
+    MINIMAL_VIEWS=5
     im_height=masks.shape[1]
     im_width = masks.shape[2]
     xx, yy, zz = np.meshgrid(np.linspace(-scale, scale, GRID_SIZE), np.linspace(-scale, scale, GRID_SIZE),
@@ -145,7 +145,7 @@ def refine_visual_hull(masks, Ps, scale, center):
     for i in range(num_cam):
         proji = Ps[i] @ np.concatenate((points, np.ones((1, GRID_SIZE*GRID_SIZE*GRID_SIZE))), axis=0)
         depths = proji[2]
-        proj_pixels = np.round(proji[:2] / depths).astype(np.long)
+        proj_pixels = np.round(proji[:2] / depths).astype(np.longlong)
         relevant_inds = np.logical_and(proj_pixels[0] >= 0, proj_pixels[1] < im_height)
         relevant_inds = np.logical_and(relevant_inds, proj_pixels[0] < im_width)
         relevant_inds = np.logical_and(relevant_inds, proj_pixels[1] >= 0)
