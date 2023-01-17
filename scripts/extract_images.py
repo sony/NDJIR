@@ -23,6 +23,7 @@ import numpy as np
 def main(args):
 
     fpaths = sorted(glob.glob(f"{args.dpath}/*.mp4"))
+    fpaths += sorted(glob.glob(f"{args.dpath}/*.MP4"))
 
     # Distribute number of images
     num_frames_per_video = []
@@ -47,7 +48,8 @@ def main(args):
         cap = cv2.VideoCapture(fpath)
 
         frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        mod = frame_count // num_images_per_video[i]
+        i_frames = np.linspace(0, frame_count - 1, 
+                                num_images_per_video[i] + 1).astype(np.int32)
 
         if (cap.isOpened()== False): 
             print("Error opening video stream or file")
@@ -56,14 +58,16 @@ def main(args):
         while(cap.isOpened()):
             ret, image = cap.read()
             if ret == True:
-                cond = j % mod == 0 \
+                cond = j in i_frames \
                     and j > args.n_frames_skip_first \
                     and j < (frame_count - args.n_frames_skip_last)
                 if cond:
                     opath = f"{path.parent.absolute()}/image/{cnt:06d}.png"
-                    if cv2.__version__ == "4.6.0":
+
+                    if args.flip:
                         image = cv2.flip(image, 0)
                         image = cv2.flip(image, 1)
+
                     cv2.imwrite(opath, image)
                     cnt += 1
                     print(f"{opath} written")
@@ -79,10 +83,11 @@ if __name__ == '__main__':
                         help="Directory path to videos from which images are extracted.")
     parser.add_argument("-n", "--num_images", type=int, default=100, 
                         help="Rough number of images to be extracted.")
-    parser.add_argument("--n_frames_skip_first", type=int, default=10, 
+    parser.add_argument("--n_frames_skip_first", type=int, default=0, 
                         help="Num. of frames to be skipped first.")
-    parser.add_argument("--n_frames_skip_last", type=int, default=10, 
+    parser.add_argument("--n_frames_skip_last", type=int, default=0, 
                         help="Num. of frames to be skipped last.")
-
+    parser.add_argument("--flip", action="store_true", 
+                        help="Flip extracted image.")
     args = parser.parse_args()
     main(args)
