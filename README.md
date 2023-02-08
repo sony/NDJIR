@@ -1,6 +1,6 @@
 # NDJIR: Neural Direct and Joint Inverse Rendering
 
-## [Paper](https://github.com/sony/NDJIR/files/10430538/arxiv_NDJIR_compressed.pdf), arXiv(TBD)
+## [Paper](https://arxiv.org/abs/2302.00675)
 
 Neural direct and joint inverse rendering (NDJIR) jointly decomposes an object in a scene into geometry (mesh), lights (environment light and implicit illumination), and materials (base color, roughness, and specular reflectance) given multi-view (posed) images. NDJIR directly uses the physically-based rendering equation, so we can smoothly import the decomposed geometry with materials into existing DCC tools.
 
@@ -250,4 +250,11 @@ Now, we have geometry and spatially-varying materials, go to [Physically-based R
 
 ## Citation
 
-TBD
+```
+@misc{https://doi.org/10.48550/arxiv.2302.00675,
+  url = {https://arxiv.org/abs/2302.00675},
+  author = {Yoshiyama, Kazuki and Narihira, Takuya},  
+  title = {NDJIR: Neural Direct and Joint Inverse Rendering for Geometry, Lights, and Materials of Real Object},
+  year = {2023}
+}
+```
